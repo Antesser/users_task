@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from sqlalchemy import select
 from database import Base, engine, session_factory
 from models import User
 
@@ -24,6 +24,18 @@ class ORM:
             # после flush пользователь получает первичный ключ id, который отдала БД
             session.flush()
             session.commit()
+
+    @staticmethod
+    def get_users():
+        result = []
+        with session_factory() as session:
+            users = session.query(User).order_by(User.full_name).all()
+            for user in users:
+                result.append(
+                    f"{user.full_name}, {user.birth_date}, {user.sex}, {user.age}"
+                )
+        print(result)
+        return result
 
 
 def calculate_age(date):
