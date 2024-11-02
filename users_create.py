@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-# import sys
-
-
-# name = sys.argv[1]
-# date = sys.argv[2]
-# sex = sys.argv[3]
-
 from orm import ORM
 from models import User
 
