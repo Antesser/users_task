@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
 import sys
+
 from create_table import TableCreation
 from users import User
-
-
 
 mode = sys.argv[1]
 
 
 class Start:
     user = User()
+
     def operating_mode(self, mode):
         match mode:
             case "1":

@@ -1,5 +1,3 @@
-
-from datetime import datetime
 import time
 
 from database import Base, engine, session_factory
@@ -15,11 +13,7 @@ class ORM:
     @staticmethod
     def insert_users(name, date, sex):
         with session_factory() as session:
-            new_user = User(
-                full_name=name,
-                birth_date=date,
-                sex=sex
-            )
+            new_user = User(full_name=name, birth_date=date, sex=sex)
             session.add(new_user)
             # flush отправляет запрос в базу данных
             # после flush пользователь получает первичный ключ id, который отдала БД
@@ -32,7 +26,6 @@ class ORM:
             users = session.query(User).order_by(User.full_name).all()
         return users
 
-
     @staticmethod
     def add_bulk(bulk_data):
         with session_factory() as session:
@@ -41,7 +34,6 @@ class ORM:
                     full_name=data.get("name"),
                     birth_date=data.get("date"),
                     sex=data.get("sex"),
-
                 )
                 session.add(new_user)
             session.flush()

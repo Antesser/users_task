@@ -7,8 +7,8 @@ from orm import ORM
 
 fake = Faker("ru_RU")
 
-class User:
 
+class User:
     cyrilic_dict = {
         "Ь": "",
         "ь": "",
@@ -78,7 +78,6 @@ class User:
         "я": "ya",
     }
 
-    
     def add_user(self, name, date, sex):
         ORM.insert_users(name, date, sex)
 
@@ -87,8 +86,8 @@ class User:
         users = ORM.get_users()
         for user in users:
             result.append(
-            f"{user.full_name}, {user.birth_date}, {user.sex}, {self.calculate_age(str(user.birth_date))}"
-                )
+                f"{user.full_name}, {user.birth_date}, {user.sex}, {self.calculate_age(str(user.birth_date))}"
+            )
         print(result)
 
     def get_f_user(self):
@@ -97,7 +96,6 @@ class User:
     def create(self):
         ORM.create_table()
 
-
     def add_bulk(self):
         chunk_len = 10000
         all_users = self.generate_users()
@@ -105,7 +103,6 @@ class User:
         bulk_data = split_bulk(all_users, chunk_len)
         for data in bulk_data:
             ORM.add_bulk(data)
-
 
     def generate_users(self):
         num_users = 1_000_000
@@ -170,6 +167,7 @@ def split_bulk(seq, *args):
         n, *args = args
         return [split_bulk(c, *args) for c in chunks(seq, n)]
     return list(seq)
+
 
 # используем ленивый генератор для экономия памяти
 def chunks(seq, n):
