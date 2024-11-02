@@ -3,12 +3,9 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from config import DATABASE_URI
 
-
 engine = create_engine(DATABASE_URI)
 session_factory = sessionmaker(engine)
 
 
 class Base(DeclarativeBase):
     pass
-
-
