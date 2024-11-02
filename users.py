@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
-
 import itertools
 import random
-from datetime import date, timedelta
-
+from datetime import date, datetime, timedelta
 from faker import Faker
-
 from orm import ORM
 
 fake = Faker("ru_RU")
 
-
-class AddBulk:
-    def add_bulk(self):
-        chunk_len = 10000
-        all_users = self.generate_users()
-        all_users.extend(self.generate_f_users())
-        bulk_data = split_bulk(all_users, chunk_len)
-        for data in bulk_data:
-            ORM.add_bulk(data)
+class User:
 
     cyrilic_dict = {
         "Ь": "",
@@ -89,8 +78,37 @@ class AddBulk:
         "я": "ya",
     }
 
+    
+    def add_user(self, name, date, sex):
+        ORM.insert_users(name, date, sex)
+
+    def get_user(self):
+        result = []
+        users = ORM.get_users()
+        for user in users:
+            result.append(
+            f"{user.full_name}, {user.birth_date}, {user.sex}, {self.calculate_age(str(user.birth_date))}"
+                )
+        print(result)
+
+    def get_f_user(self):
+        ORM.get_f_users()
+
+    def create(self):
+        ORM.create_table()
+
+
+    def add_bulk(self):
+        chunk_len = 10000
+        all_users = self.generate_users()
+        all_users.extend(self.generate_f_users())
+        bulk_data = split_bulk(all_users, chunk_len)
+        for data in bulk_data:
+            ORM.add_bulk(data)
+
+
     def generate_users(self):
-        num_users = 1_000
+        num_users = 1_000_000
 
         user_data = []
         table = str.maketrans(self.cyrilic_dict)
@@ -123,9 +141,27 @@ class AddBulk:
             users["date"] = str(
                 date.today() - timedelta(days=random.randint(2, 365 * 100))
             )
-            users["age"] = ""
             user_data.append(users)
         return user_data
+
+    def calculate_age(self, date):
+        try:
+            birthdate = datetime.fromisoformat(date)
+        except ValueError:
+            # проверяем на високосный год
+            _, month, day = date.split("-")
+            if month == "02" and day == "29":
+                date = date[:-1] + "8"
+                birthdate = datetime.fromisoformat(date)
+            else:
+                raise ValueError("Check if inputed date is correct")
+        today = datetime.now().date()
+        age = (
+            today.year
+            - birthdate.year
+            - ((today.month, today.day) < (birthdate.month, birthdate.day))
+        )
+        return age
 
 
 # рекурсивно разбиваем нашу последовательность пользователей на требуемое количество частей
@@ -143,8 +179,3 @@ def chunks(seq, n):
         if len(chunk) == 0:
             break
         yield chunk
-
-
-# if __name__ == "__main__":
-#     new_employee = AddBulk()
-#     new_employee.add_bulk()

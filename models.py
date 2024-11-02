@@ -9,4 +9,3 @@ class User(Base):
     full_name = Column(String(255), nullable=False, index=True)
     birth_date = Column(Date, nullable=False)
     sex = Column(String(10), nullable=False, index=True)
-    age = Column(Integer, nullable=False)

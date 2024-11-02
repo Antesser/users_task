@@ -1,3 +1,4 @@
+
 from datetime import datetime
 import time
 
@@ -17,8 +18,7 @@ class ORM:
             new_user = User(
                 full_name=name,
                 birth_date=date,
-                sex=sex,
-                age=calculate_age(date),
+                sex=sex
             )
             session.add(new_user)
             # flush отправляет запрос в базу данных
@@ -28,14 +28,10 @@ class ORM:
 
     @staticmethod
     def get_users():
-        result = []
         with session_factory() as session:
             users = session.query(User).order_by(User.full_name).all()
-            for user in users:
-                result.append(
-                    f"{user.full_name}, {user.birth_date}, {user.sex}, {user.age}"
-                )
-        print(result)
+        return users
+
 
     @staticmethod
     def add_bulk(bulk_data):
@@ -45,7 +41,7 @@ class ORM:
                     full_name=data.get("name"),
                     birth_date=data.get("date"),
                     sex=data.get("sex"),
-                    age=calculate_age(data.get("date")),
+
                 )
                 session.add(new_user)
             session.flush()
@@ -63,29 +59,9 @@ class ORM:
             )
             for user in users:
                 result.append(
-                    f"{user.full_name}, {user.birth_date}, {user.sex}, {user.age}"
+                    f"{user.full_name}, {user.birth_date}, {user.sex}"
                 )
         end_time = time.time()
 
         execution_time = end_time - start_time
         print(f"Execution time was {round(execution_time,4)} sec")
-
-
-def calculate_age(date):
-    try:
-        birthdate = datetime.fromisoformat(date)
-    except ValueError:
-        # проверяем на високосный год
-        _, month, day = date.split("-")
-        if month == "02" and day == "29":
-            date = date[:-1] + "8"
-            birthdate = datetime.fromisoformat(date)
-        else:
-            raise ValueError("Check if inputed date is correct")
-    today = datetime.now().date()
-    age = (
-        today.year
-        - birthdate.year
-        - ((today.month, today.day) < (birthdate.month, birthdate.day))
-    )
-    return age
